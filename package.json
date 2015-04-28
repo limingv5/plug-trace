@@ -1,0 +1,20 @@
+{
+  "name": "plug-trace",
+  "version": "0.0.1",
+  "description": "trace stack info",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "trace",
+    "debug",
+    "log"
+  ],
+  "repository": "https://github.com/limingv5/plug-trace.git",
+  "author": "limingv5",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.0.0"
+  }
+}
