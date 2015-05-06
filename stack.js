@@ -59,6 +59,13 @@ exports = module.exports = function (module_name) {
         tip: tip || "Exception"
       });
     },
+    info: function (input, tip) {
+      push({
+        type: "info",
+        msg: input,
+        tip: tip || "Untitled"
+      });
+    },
     engine: function (url, path) {
       push({
         type: "engine",
