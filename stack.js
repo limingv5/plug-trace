@@ -38,10 +38,11 @@ exports = module.exports = function (module_name) {
         list: files
       });
     },
-    response: function (input) {
+    response: function (input, content) {
       push({
         type: "response",
-        url: input
+        url: input,
+        content: content
       });
       process.emit(module_name, trace);
     },
