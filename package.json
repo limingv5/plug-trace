@@ -1,6 +1,6 @@
 {
   "name": "plug-trace",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "trace stack info",
   "main": "index.js",
   "keywords": [
@@ -12,6 +12,6 @@
   "author": "limingv5",
   "license": "ISC",
   "dependencies": {
-    "chalk": "~1.0.0"
+    "chalk": "~1.1.0"
   }
 }
