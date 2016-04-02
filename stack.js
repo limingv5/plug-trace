@@ -1,4 +1,6 @@
-var urlLib = require("url");
+"use strict";
+
+const urlLib = require("url");
 
 Date.prototype.format = function (fmt) {
   var o = {
@@ -21,95 +23,115 @@ Date.prototype.format = function (fmt) {
   return fmt;
 };
 
-exports = module.exports = function (module_name) {
-  var trace = [];
+class Stack {
+  constructor(module_name) {
+    this.fireName = module_name;
+    this.traceStack = [];
+  }
 
-  function push(obj) {
+  push(obj) {
     obj = obj || {};
     obj.time = obj.time || new Date().format("hh:mm:ss.S");
-    trace.push(obj);
+    this.traceStack.push(obj);
   }
 
-  return {
-    request: function (host, files) {
-      push({
-        type: "request",
-        host: host,
-        list: files
-      });
-    },
-    response: function (input, content) {
-      push({
-        type: "response",
-        url: input,
-        content: content
-      });
-      process.emit(module_name, trace);
-    },
-    error: function (input, tip) {
-      push({
-        type: "error",
-        msg: input,
-        tip: tip || "Exception"
-      });
-    },
-    warn: function (input, tip) {
-      push({
-        type: "warn",
-        msg: input,
-        tip: tip || "Exception"
-      });
-    },
-    info: function (input, tip) {
-      push({
-        type: "info",
-        msg: input,
-        tip: tip || "Untitled"
-      });
-    },
-    engine: function (url, path) {
-      push({
-        type: "engine",
-        url: url,
-        path: path
-      });
-    },
-    local: function (url, path) {
-      push({
-        type: "local",
-        url: url,
-        path: path
-      });
-    },
-    filter: function (regx, ori_url, url) {
-      push({
-        type: "filter",
-        regx: regx,
-        before: ori_url,
-        after: url
-      });
-    },
-    cache: function (url, path) {
-      push({
-        type: "cache",
-        url: url,
-        path: path
-      });
-    },
-    remote: function (url, hosts) {
-      url = /^https?:\/\//.test(url) ? url : "http:" + url;
-      var host = urlLib.parse(url).host;
-      if (typeof hosts == "object") {
-        host = hosts[host] ? hosts[host] : host;
-      }
-      else if (typeof hosts == "string") {
-        host = hosts;
-      }
-      push({
-        type: "remote",
-        url: url,
-        host: host
-      });
-    }
+  request(host, files) {
+    this.push({
+      type: "request",
+      host: host,
+      list: files
+    });
   }
-};
+
+  response(url) {
+    this.push({
+      type: "response",
+      url: url
+    });
+
+    process.emit(this.fireName, this.traceStack);
+  }
+
+  fail(url) {
+    this.push({
+      type: "fail",
+      url: url
+    });
+    process.emit(this.fireName, this.traceStack);
+  }
+
+  error(input, tip) {
+    this.push({
+      type: "error",
+      msg: input,
+      tip: tip || "Exception"
+    });
+  }
+
+  warn(input, tip) {
+    this.push({
+      type: "warn",
+      msg: input,
+      tip: tip || "Exception"
+    });
+  }
+
+  info(input, tip) {
+    this.push({
+      type: "info",
+      msg: input,
+      tip: tip || "Untitled"
+    });
+  }
+
+  engine(url, path) {
+    this.push({
+      type: "engine",
+      url: url,
+      path: path
+    });
+  }
+
+  local(url, path) {
+    this.push({
+      type: "local",
+      url: url,
+      path: path
+    });
+  }
+
+  filter(regx, ori_url, url) {
+    this.push({
+      type: "filter",
+      regx: regx,
+      before: ori_url,
+      after: url
+    });
+  }
+
+  cache(url, path) {
+    this.push({
+      type: "cache",
+      url: url,
+      path: path
+    });
+  }
+
+  remote(url, hosts) {
+    url = /^https?:\/\//.test(url) ? url : "http:" + url;
+    var host = urlLib.parse(url).host;
+    if (typeof hosts == "object") {
+      host = hosts[host] ? hosts[host] : host;
+    }
+    else if (typeof hosts == "string") {
+      host = hosts;
+    }
+    this.push({
+      type: "remote",
+      url: url,
+      host: host
+    });
+  }
+}
+
+module.exports = Stack;

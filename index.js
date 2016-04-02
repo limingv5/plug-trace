@@ -10,7 +10,7 @@ dir.forEach(function (i) {
   Log[name] = require("./lib/" + name);
 });
 
-exports = module.exports = function (data, just) {
+var exports = module.exports = function (data, just) {
   data.forEach(function (item) {
     var type = item.type;
     if (type && typeof Log[type] == "function" && (
